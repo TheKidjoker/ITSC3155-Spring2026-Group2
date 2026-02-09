@@ -84,3 +84,33 @@ class SandwichMachine:
 
 
 ### Make an instance of SandwichMachine class and write the rest of the codes ###
+
+machine = SandwichMachine(resources)
+
+machine_on = True
+
+while machine_on:
+    choice = input("What would you like? (small/medium/large/off/report): ").lower()
+
+    if choice == "off":
+        machine_on = False
+
+    elif choice == "report":
+        print("Current resources:")
+        for item, amount in machine.machine_resources.items():
+            print(f"{item}: {amount}")
+
+    elif choice in recipes:
+        recipe = recipes[choice]
+        ingredients = recipe["ingredients"]
+        cost = recipe["cost"]
+
+        if machine.check_resources(ingredients):
+            coins = machine.process_coins()
+            if machine.transaction_result(coins, cost):
+                machine.make_sandwich(choice, ingredients)
+
+    else:
+        print("Invalid selection.")
+
+
