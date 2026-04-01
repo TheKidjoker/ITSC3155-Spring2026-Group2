@@ -66,3 +66,15 @@ def delete(db: Session, item_id):
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+def guest_order(db: Session, order: schemas.GuestOrder):
+    db_order = models.Order(
+        customer_name = order.customer_name,
+        phone = order.phone,
+        adress = order.address
+        #sandwich_id
+    )
+    db.add(db_order)
+    db.commit()
+    db.refresh(db_order)
+    return db_order

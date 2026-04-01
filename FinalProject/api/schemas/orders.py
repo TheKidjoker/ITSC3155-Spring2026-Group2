@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from .order_details import OrderDetail
 
 
@@ -26,3 +26,11 @@ class Order(OrderBase):
 
     class ConfigDict:
         from_attributes = True
+
+class GuestOrder(BaseModel):
+    customer_name = str
+    phone: str
+    adress: str
+
+    sandwich_id:int 
+    quantity: int = 1
