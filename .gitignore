@@ -159,6 +159,10 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
+<<<<<<< HEAD
 Assignment5/.pytest_cache
 Assignment5/api/.pytest_cache
 FinalProject/api/.pytest_cache
+=======
+.pytest_cache
+>>>>>>> feature/menu-item-details
