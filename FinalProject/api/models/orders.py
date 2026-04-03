@@ -2,18 +2,18 @@ from sqlalchemy import Column, ForeignKey, Integer, String, DECIMAL, DATETIME
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from ..dependencies.database import Base
-
+import uuid
 
 class Order(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    used_id = Column(Integer,ForeignKey("users.id"), nullable=True)
+    user_id = Column(Integer,ForeignKey("users.id"), nullable=True)
 
-    #Guest dields
+    #Guest detailds
     customer_name = Column(String(100))
     phone = Column(String, nullable=True)
-    adress = Column(String, nullable=True)
+    address = Column(String, nullable=True)
     order_date = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
     description = Column(String(300))
 

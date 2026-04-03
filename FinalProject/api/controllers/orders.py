@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as model
 from sqlalchemy.exc import SQLAlchemyError
+from ..schemas import orders as schemas
 
 
 def create(db: Session, request):
@@ -68,13 +69,18 @@ def delete(db: Session, item_id):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 def guest_order(db: Session, order: schemas.GuestOrder):
-    db_order = models.Order(
+    db_order = model.Order(
         customer_name = order.customer_name,
         phone = order.phone,
-        adress = order.address
+        address = order.address
         #sandwich_id
     )
-    db.add(db_order)
-    db.commit()
-    db.refresh(db_order)
-    return db_order
+    try:
+        db.add(db_order)
+        db.commit()
+        db.refresh(db_order)
+        return db_order
+    except SQLAlchemyError as e:
+        db.rollback() # Always rollback on failure
+        error = str(e.__dict__.get('orig', e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)

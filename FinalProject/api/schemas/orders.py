@@ -28,9 +28,8 @@ class Order(OrderBase):
         from_attributes = True
 
 class GuestOrder(BaseModel):
-    customer_name = str
+    customer_name: str  
     phone: str
-    adress: str
-
-    sandwich_id:int 
+    address: str
+    sandwich_id: int
     quantity: int = 1
