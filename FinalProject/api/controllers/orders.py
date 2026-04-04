@@ -6,9 +6,23 @@ from ..schemas import orders as schemas
 
 
 def create(db: Session, request):
+    if request.order_type not in ("delivery", "takeout"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="order_type must be 'delivery' or 'takeout'"
+        )
+
+    if request.order_type == "delivery" and not request.address:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="address is required for delivery orders"
+        )
+
     new_item = model.Order(
         customer_name=request.customer_name,
-        description=request.description
+        description=request.description,
+        order_type=request.order_type,
+        address=request.address
     )
 
     try:

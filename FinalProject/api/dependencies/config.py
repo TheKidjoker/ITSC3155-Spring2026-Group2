@@ -1,8 +1,10 @@
+import os
+
 class conf:
-    db_host = "localhost"
-    db_name = "sandwich_maker_api"
-    db_port = 3306
-    db_user = "root"
-    db_password = "Gabriel#8624"
-    app_host = "localhost"
-    app_port = 8000
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_name = os.getenv("DB_NAME", "sandwich_maker_api")
+    db_port = int(os.getenv("DB_PORT", "3306"))
+    db_user = os.getenv("DB_USER", "root")
+    db_password = os.getenv("DB_PASSWORD", "")
+    app_host = os.getenv("APP_HOST", "localhost")
+    app_port = int(os.getenv("APP_PORT", "8000"))
