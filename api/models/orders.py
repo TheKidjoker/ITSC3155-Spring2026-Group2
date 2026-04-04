@@ -2,6 +2,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, DECIMAL, DATETIME
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from ..dependencies.database import Base
+import uuid
 
 
 class Order(Base):
@@ -13,3 +14,7 @@ class Order(Base):
     description = Column(String(300))
 
     order_details = relationship("OrderDetail", back_populates="order")
+
+    #Tracking System
+    tracking_id = Column(String(36), unique=True, default=lambda: str(uuid.uuid4()))
+    order_status = Column(String(50), nullable=False, server_default="Pending")
