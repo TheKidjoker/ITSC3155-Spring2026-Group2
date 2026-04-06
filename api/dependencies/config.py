@@ -1,10 +1,10 @@
-class Config:
-    db_host = "localhost"
-    db_name = "testdb"
-    db_port = 3306
-    db_user = "root"
-    db_password = "thomasK123!"
-    app_host = "localhost"
-    app_port = 8000
+import os
 
-conf = Config()
+class conf:
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_name = os.getenv("DB_NAME", "sandwich_maker_api")
+    db_port = int(os.getenv("DB_PORT", "3306"))
+    db_user = os.getenv("DB_USER", "root")
+    db_password = os.getenv("DB_PASSWORD", "")
+    app_host = os.getenv("APP_HOST", "localhost")
+    app_port = int(os.getenv("APP_PORT", "8000"))

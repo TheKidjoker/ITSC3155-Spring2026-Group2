@@ -33,3 +33,7 @@ def update(item_id: int, request: schema.OrderUpdate, db: Session = Depends(get_
 @router.delete("/{item_id}")
 def delete(item_id: int, db: Session = Depends(get_db)):
     return controller.delete(db=db, item_id=item_id)
+
+@router.post("/guest", response_model=schema.Order)
+def checkout_as_guest(order: schema.GuestOrder, db: Session = Depends(get_db)):
+    return controller.guest_order(db=db, order=order)

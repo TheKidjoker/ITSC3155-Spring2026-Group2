@@ -8,4 +8,4 @@ class MenuItemResponse(BaseModel):
     category: str
 
     class Config:
-        from_attributes = True   # for Pydantic v2
+        from_attributes = True
