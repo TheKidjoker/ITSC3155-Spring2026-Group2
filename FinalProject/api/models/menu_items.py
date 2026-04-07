@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, DECIMAL
-from sqlalchemy.orm import relationship
 from ..dependencies.database import Base
 
 class MenuItem(Base):
@@ -11,4 +10,3 @@ class MenuItem(Base):
     calories = Column(Integer, nullable=True)
     food_category = Column(String(50), nullable=True)
     description = Column(String(300), nullable=True)
-    order_details = relationship("OrderDetail", back_populates="menu_item")

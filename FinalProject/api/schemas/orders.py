@@ -27,6 +27,10 @@ class Order(OrderBase):
     id: int
     order_date: Optional[datetime] = None
     order_details: list[OrderDetail] = None
+    user_id: Optional[int] = None
+    phone: Optional[str] = None
+    tracking_id: Optional[str] = None
+    order_status: Optional[str] = None
 
     class ConfigDict:
         from_attributes = True

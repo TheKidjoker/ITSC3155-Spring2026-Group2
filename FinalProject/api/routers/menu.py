@@ -2,16 +2,13 @@
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from typing import Optional
-
-
 
 from ..controllers import menu_items as controller
 from ..schemas import menu_items as schema
-from ..dependencies.database import engine, get_db
+from ..dependencies.database import get_db
 
-#routes start with /menu
-router = APIRouter(prefix='/menu', tags=["Menu"])
+# routes start with /menu
+router = APIRouter(prefix="/menu", tags=["Menu"])
 
 #return items by category
 @router.get("/", response_model=list[schema.MenuItem])
@@ -42,3 +39,12 @@ def update(item_id: int, request: schema.MenuItemUpdate, db: Session = Depends(g
 @router.delete("/{item_id}")
 def delete(item_id: int, db: Session = Depends(get_db)):
     return controller.delete(db, item_id)
+
+
+# Same resource as GET /menu/{item_id}; kept for older clients / docs clarity
+legacy_router = APIRouter(tags=["Menu"])
+
+
+@legacy_router.get("/menu-items/{item_id}", response_model=schema.MenuItem)
+def get_menu_item_by_path(item_id: int, db: Session = Depends(get_db)):
+    return controller.read_one(db, item_id)

@@ -6,7 +6,20 @@ from .models import model_loader
 from .dependencies.config import conf
 
 
-app = FastAPI()
+app = FastAPI(
+    openapi_tags=[
+        {"name": "Orders", "description": "Create and manage customer orders."},
+        {"name": "Order Details", "description": "Line items (sandwiches) on each order."},
+        {"name": "Order Tracking", "description": "Look up or update order status by tracking id."},
+        {"name": "Menu", "description": "Menu items available to customers and staff."},
+        {"name": "Sandwiches", "description": "Sandwich products and pricing."},
+        {"name": "Recipes", "description": "Ingredient amounts linking sandwiches to resources."},
+        {"name": "Resources", "description": "Ingredients and inventory items."},
+        {"name": "Payments", "description": "Payments linked to orders."},
+        {"name": "Promotions", "description": "Discount codes and promotions."},
+        {"name": "Reviews", "description": "Customer reviews."},
+    ],
+)
 
 origins = ["*"]
 

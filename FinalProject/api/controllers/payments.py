@@ -2,17 +2,27 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response
 from sqlalchemy.exc import SQLAlchemyError
 
-from ..models import menu_items as model
-from ..schemas import menu_items as schemas
+from ..models import payments as model
+from ..models import orders as order_model
+from ..schemas import payments as schemas
 
 
-def create(db: Session, request: schemas.MenuItemCreate):
-    new_item = model.MenuItem(
-        item_name=request.item_name,
-        price=request.price,
-        calories=request.calories,
-        food_category=request.food_category,
-        description=request.description,
+def create(db: Session, request: schemas.PaymentCreate):
+    order = (
+        db.query(order_model.Order)
+        .filter(order_model.Order.id == request.order_id)
+        .first()
+    )
+    if not order:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Order id not found"
+        )
+
+    new_item = model.Payment(
+        order_id=request.order_id,
+        amount=request.amount,
+        method=request.method,
+        status=request.status,
     )
     try:
         db.add(new_item)
@@ -26,19 +36,7 @@ def create(db: Session, request: schemas.MenuItemCreate):
 
 def read_all(db: Session):
     try:
-        return db.query(model.MenuItem).all()
-    except SQLAlchemyError as e:
-        error = str(e.__dict__["orig"])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-
-
-def read_by_category(db: Session, category: str):
-    try:
-        return (
-            db.query(model.MenuItem)
-            .filter(model.MenuItem.food_category == category)
-            .all()
-        )
+        return db.query(model.Payment).all()
     except SQLAlchemyError as e:
         error = str(e.__dict__["orig"])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
@@ -46,9 +44,7 @@ def read_by_category(db: Session, category: str):
 
 def read_one(db: Session, item_id: int):
     try:
-        item = (
-            db.query(model.MenuItem).filter(model.MenuItem.id == item_id).first()
-        )
+        item = db.query(model.Payment).filter(model.Payment.id == item_id).first()
         if not item:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!"
@@ -59,9 +55,9 @@ def read_one(db: Session, item_id: int):
     return item
 
 
-def update(db: Session, item_id: int, request: schemas.MenuItemUpdate):
+def update(db: Session, item_id: int, request: schemas.PaymentUpdate):
     try:
-        q = db.query(model.MenuItem).filter(model.MenuItem.id == item_id)
+        q = db.query(model.Payment).filter(model.Payment.id == item_id)
         if not q.first():
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!"
@@ -77,7 +73,7 @@ def update(db: Session, item_id: int, request: schemas.MenuItemUpdate):
 
 def delete(db: Session, item_id: int):
     try:
-        q = db.query(model.MenuItem).filter(model.MenuItem.id == item_id)
+        q = db.query(model.Payment).filter(model.Payment.id == item_id)
         if not q.first():
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!"
