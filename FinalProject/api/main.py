@@ -3,6 +3,7 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import index as indexRoute
 from .models import model_loader
+from .seeders import seed_data
 from .dependencies.config import conf
 
 
@@ -19,6 +20,7 @@ app.add_middleware(
 )
 
 model_loader.index()
+seed_data()
 indexRoute.load_routes(app)
 
 
