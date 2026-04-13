@@ -10,16 +10,23 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
-    # Guest details
+    # Customer details
     customer_name = Column(String(100))
+    email = Column(String(150), nullable=True)
     phone = Column(String(20), nullable=True)
     address = Column(String(300), nullable=True)
+
     order_type = Column(String(20), nullable=False)
     order_date = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
     description = Column(String(300))
+    total_price = Column(DECIMAL(8, 2), nullable=True, server_default="0.00")
+
+    # Promotion link
+    promotion_id = Column(Integer, ForeignKey("promotions.id"), nullable=True)
 
     order_details = relationship("OrderDetail", back_populates="order")
     payment = relationship("Payment", back_populates="order")
+    promotion = relationship("Promotion", back_populates="orders")
 
     # Tracking System
     tracking_id = Column(String(36), unique=True, default=lambda: str(uuid.uuid4()))
