@@ -29,9 +29,9 @@ class Order(OrderBase):
     tracking_id: Optional[str] = None
     order_status: Optional[str] = None
     total_price: Optional[float] = None
-    order_details: list[OrderDetail] = None
+    order_details: Optional[list[OrderDetail]] = None
 
-    class ConfigDict:
+    class Config:
         from_attributes = True
 
 class GuestOrder(BaseModel):

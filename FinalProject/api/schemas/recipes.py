@@ -23,5 +23,5 @@ class Recipe(RecipeBase):
     sandwich: Sandwich = None
     resource: Resource = None
 
-    class ConfigDict:
+    class Config:
         from_attributes = True

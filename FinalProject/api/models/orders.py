@@ -1,6 +1,5 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DECIMAL, DATETIME
+from sqlalchemy import Column, ForeignKey, Integer, String, DECIMAL, DATETIME, func
 from sqlalchemy.orm import relationship
-from datetime import datetime
 from ..dependencies.database import Base
 import uuid
 
@@ -16,11 +15,11 @@ class Order(Base):
     address = Column(String(300), nullable=True)
 
     order_type = Column(String(20), nullable=False)
-    order_date = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
+    order_date = Column(DATETIME, nullable=False, server_default=func.now())
     description = Column(String(300))
     total_price = Column(DECIMAL(8, 2), nullable=True, server_default="0.00")
 
-    promotion_id = Column(Integer, ForeignKey("promotions.id"), nullable=True)
+    promotion_id = Column(Integer, ForeignKey("promotions.id", ondelete="SET NULL"), nullable=True)
 
     order_details = relationship("OrderDetail", back_populates="order")
     payment = relationship("Payment", back_populates="order")

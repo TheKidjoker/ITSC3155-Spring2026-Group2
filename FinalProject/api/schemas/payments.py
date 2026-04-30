@@ -27,5 +27,5 @@ class Payment(PaymentBase):
     id: int
     payment_date: Optional[datetime] = None
 
-    class ConfigDict:
+    class Config:
         from_attributes = True

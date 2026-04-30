@@ -8,13 +8,13 @@ from ..schemas import orders as schemas
 
 
 def create(db: Session, request):
-    if request.order_type not in ("delivery", "takeout"):
+    if request.order_type.lower() not in ("delivery", "takeout", "pickup"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="order_type must be 'delivery' or 'takeout'"
+            detail="order_type must be 'delivery', 'takeout', or 'pickup'"
         )
 
-    if request.order_type == "delivery" and not request.address:
+    if request.order_type.lower() == "delivery" and not request.address:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="address is required for delivery orders"
@@ -121,18 +121,29 @@ def get_revenue(db: Session, revenue_date: date):
 
 
 def guest_order(db: Session, order: schemas.GuestOrder):
+    from ..models import order_details as od_model
+
     db_order = model.Order(
-        customer_name = order.customer_name,
-        phone = order.phone,
-        address = order.address
-        #sandwich_id
+        customer_name=order.customer_name,
+        phone=order.phone,
+        address=order.address,
+        order_type="delivery",
+        description="Guest order"
     )
     try:
         db.add(db_order)
+        db.flush()
+
+        db_detail = od_model.OrderDetail(
+            order_id=db_order.id,
+            sandwich_id=order.sandwich_id,
+            amount=order.quantity
+        )
+        db.add(db_detail)
         db.commit()
         db.refresh(db_order)
         return db_order
     except SQLAlchemyError as e:
-        db.rollback() # Always rollback on failure
+        db.rollback()
         error = str(e.__dict__.get('orig', e))
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)

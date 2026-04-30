@@ -27,5 +27,5 @@ class Review(ReviewBase):
     id: int
     created_at: Optional[datetime] = None
 
-    class ConfigDict:
+    class Config:
         from_attributes = True

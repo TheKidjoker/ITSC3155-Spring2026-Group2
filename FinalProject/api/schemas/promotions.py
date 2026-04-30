@@ -26,5 +26,5 @@ class PromotionUpdate(BaseModel):
 class Promotion(PromotionBase):
     id: int
 
-    class ConfigDict:
+    class Config:
         from_attributes = True

@@ -20,5 +20,5 @@ class ResourceUpdate(BaseModel):
 class Resource(ResourceBase):
     id: int
 
-    class ConfigDict:
+    class Config:
         from_attributes = True
