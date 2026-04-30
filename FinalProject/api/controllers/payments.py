@@ -1,16 +1,16 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response
-from ..models import menu_items as model
+from ..models import payments as model
 from sqlalchemy.exc import SQLAlchemyError
 
 
 def create(db: Session, request):
-    new_item = model.MenuItem(
-        item_name=request.item_name,
-        price=request.price,
-        calories=request.calories,
-        food_category=request.food_category,
-        description=request.description
+    new_item = model.Payment(
+        order_id=request.order_id,
+        payment_type=request.payment_type,
+        transaction_status=request.transaction_status,
+        card_number=request.card_number,
+        payment_amount=request.payment_amount
     )
     try:
         db.add(new_item)
@@ -24,7 +24,7 @@ def create(db: Session, request):
 
 def read_all(db: Session):
     try:
-        result = db.query(model.MenuItem).all()
+        result = db.query(model.Payment).all()
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
@@ -33,7 +33,7 @@ def read_all(db: Session):
 
 def read_one(db: Session, item_id):
     try:
-        item = db.query(model.MenuItem).filter(model.MenuItem.id == item_id).first()
+        item = db.query(model.Payment).filter(model.Payment.id == item_id).first()
         if not item:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
     except SQLAlchemyError as e:
@@ -42,18 +42,9 @@ def read_one(db: Session, item_id):
     return item
 
 
-def read_by_category(db: Session, category: str):
-    try:
-        result = db.query(model.MenuItem).filter(model.MenuItem.food_category == category).all()
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return result
-
-
 def update(db: Session, item_id, request):
     try:
-        item = db.query(model.MenuItem).filter(model.MenuItem.id == item_id)
+        item = db.query(model.Payment).filter(model.Payment.id == item_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         update_data = request.dict(exclude_unset=True)
@@ -67,7 +58,7 @@ def update(db: Session, item_id, request):
 
 def delete(db: Session, item_id):
     try:
-        item = db.query(model.MenuItem).filter(model.MenuItem.id == item_id)
+        item = db.query(model.Payment).filter(model.Payment.id == item_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         item.delete(synchronize_session=False)

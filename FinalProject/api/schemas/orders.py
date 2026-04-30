@@ -26,6 +26,9 @@ class OrderUpdate(BaseModel):
 class Order(OrderBase):
     id: int
     order_date: Optional[datetime] = None
+    tracking_id: Optional[str] = None
+    order_status: Optional[str] = None
+    total_price: Optional[float] = None
     order_details: list[OrderDetail] = None
 
     class ConfigDict:

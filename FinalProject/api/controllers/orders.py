@@ -1,3 +1,5 @@
+from datetime import date
+from sqlalchemy import func, cast, Date
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as model
@@ -81,6 +83,42 @@ def delete(db: Session, item_id):
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+def read_by_tracking(db: Session, tracking_id: str):
+    try:
+        item = db.query(model.Order).filter(model.Order.tracking_id == tracking_id).first()
+        if not item:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tracking ID not found!")
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return item
+
+
+def read_by_date_range(db: Session, start_date: date, end_date: date):
+    try:
+        result = db.query(model.Order).filter(
+            cast(model.Order.order_date, Date) >= start_date,
+            cast(model.Order.order_date, Date) <= end_date
+        ).all()
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return result
+
+
+def get_revenue(db: Session, revenue_date: date):
+    try:
+        result = db.query(
+            func.sum(model.Order.total_price)
+        ).filter(
+            cast(model.Order.order_date, Date) == revenue_date
+        ).scalar()
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return {"date": str(revenue_date), "total_revenue": float(result) if result else 0.0}
+
 
 def guest_order(db: Session, order: schemas.GuestOrder):
     db_order = model.Order(
